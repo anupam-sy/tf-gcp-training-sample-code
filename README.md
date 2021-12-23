@@ -1,4 +1,4 @@
-# Terraform Code Sets
+# Terraform Code
 This repository contains Terraform code for Infrastructure Components* deployment on Google Cloud Platform.
 
 ## Prerequisites:
