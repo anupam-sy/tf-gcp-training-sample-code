@@ -34,19 +34,14 @@ To use a standard gcs backend, create a GCS Bucket and set the versioning. Use b
 	gsutil versioning set on gs://bucket-name
 
 ## Execution:
-To execute the Terraform code, go to command prompt and then run the following commands:
+To execute the Terraform code, go to command prompt and change the directory to your terraform configuration directory and then execute the following commands:
 
--   [Required] `terraform init`
-    -   It initializes the working directory containing Terraform configuration files.
-
--   [Optional] `terraform plan`
-    -   It creates an execution plan.
-
--   [Required] `terraform apply-auto-approve`
-    -   It executes the actions proposed in a Terraform plan.
-
--   [Optional] `terraform destroy`
-    -   The terraform destroy command is used to destory the resources defined in your Terraform configuration. To delete the specific resource, use the "target" option with destroy command.
+-   Run `[Required] terraform init` to initialize the terraform working directory containing configuration files.
+-   Run `[Optional] terraform validate` to check whether configuration is syntactically valid and internally consistent.
+-   Run `[Optional] terraform fmt` to rewrite Terraform configuration files to a canonical format and style.
+-   Run `[Optional] terraform plan` to preview the execution plan.
+-   Run `[Required] terraform apply` to execute the actions proposed in a Terraform plan.
+-   Run `[Optional] terraform destroy` to destory the resources defined in your Terraform configuration.
 
 ## Infrastructure Components:
 Below mentioned resources will be deployed post successful execution of Terraform Code.
@@ -55,8 +50,7 @@ Below mentioned resources will be deployed post successful execution of Terrafor
 2) Subnet
 3) Firewall
 4) Public and Private IP
-5) Public IP
-6) Compute Disk
-7) Service Account
-8) Compute Engine
-9) Unmanaged Instance Group
+5) Compute Disk
+6) Service Account
+7) Compute Engine
+8) Unmanaged Instance Group
