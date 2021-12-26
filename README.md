@@ -1,5 +1,5 @@
 # Terraform Code
-This repository contains Terraform code for Infrastructure Components* deployment on Google Cloud Platform.
+This repository contains terraform code for Infrastructure Components* deployment on Google Cloud Platform.
 
 ## Prerequisites:
 Below prerequisites must be fulfilled for successful execution of code.
