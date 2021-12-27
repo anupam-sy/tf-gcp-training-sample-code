@@ -19,7 +19,7 @@ In order to execute these templates you must have a Service Account with the fol
 - `roles/storage.admin` on the project housing terraform state files, If leveraging Standard GCS Backend.
 
 ### Project API Requirement:
-In order to use the services, required APIs must be enabled before resource deployment. You can either enable these using terraform or using gcloud command.
+In order to use the services, required APIs must be enabled before resource deployment. You can either enable these using terraform or using gcloud command. Sample examples below -
 
 * terraform code snip to enable Service APIs
 ```
