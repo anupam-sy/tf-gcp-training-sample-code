@@ -19,19 +19,36 @@ In order to execute these templates you must have a Service Account with the fol
 - `roles/storage.admin` on the project housing terraform state files, If leveraging Standard GCS Backend.
 
 ### Project API Requirement:
-In order to use the services, required APIs must be enabled before resource deployment. Enable all the requried APIs using below mentioned gcloud command. Example below -
+In order to use the services, required APIs must be enabled before resource deployment. You can either enable these using terraform or using gcloud command.
 
+* terraform code snip to enable Service APIs
+```
+    # locals block to define required service APIs
+    locals {
+    googleapis = [
+        "compute.googleapis.com",
+        "cloudresourcemanager.googleapis.com",
+        "iam.googleapis.com"
+    ]
+    }
+
+    # resource block to enable required service APIs
+    resource "google_project_service" "apis" {
+    for_each = toset(local.googleapis)
+
+    project                = "your_project_id"
+    service                = each.key
+    disable_on_destroy     = false
+    }
+```
+
+* gcloud command to enable Service APIs
+```
 	gcloud services enable servicenetworking.googleapis.com \
 	    cloudresourcemanager.googleapis.com \
 	    compute.googleapis.com \
 	    iam.googleapis.com
-
-### Standard Backend Setup:
-To use a standard gcs backend, create a GCS Bucket and set the versioning. Use below gcloud commands.
-
-    gcloud config set project PROJECT_ID
-	gsutil mb -c standard -l eu gs://bucket-name
-	gsutil versioning set on gs://bucket-name
+```
 
 ## Execution:
 To execute the Terraform code, go to command prompt and change the directory to your terraform configuration directory and then execute the following commands:
