@@ -36,7 +36,7 @@ resource "google_compute_instance" "tst_vm01" {
   labels              = var.resource_labels
   deletion_protection = false
 
-  metadata_startup_script = file("${path.module}/bin/vm-startup.sh")
+  metadata_startup_script = file("${path.module}/scripts/vm-startup.sh")
   /*
   metadata = {
     # enable-oslogin     = "TRUE"
