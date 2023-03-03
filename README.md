@@ -1,48 +1,75 @@
-# Terraform Code
-This repository contains Terraform code for Infrastructure Components* deployment on Google Cloud Platform.
+# Terraform Sample Code
+This repository contains sample terraform code for infrastructure deployment on Google Cloud Platform. Below mentioned resources will be deployed post successful execution of Terraform Code available in this repository.
 
-## Prerequisites:
-Below prerequisites must be fulfilled for successful execution of code.
+1. VPC
+2. Subnet
+3. Firewall
+4. Public & Private IP
+5. Compute Disk
+6. Service Account
+7. Google Compute Engine
+8. Unmanaged Instance Group
 
-### Software Requirement:
-Resources in this repository are meant for use with Terraform 1.0.0 (Check the version using `terraform --version`). If you don't have the compatible version, download it from official Terraform repository.
+## Prerequisites
+Below prerequisites must be fulfilled for successful execution of terraform concept code sets.
 
--   [gcloud sdk](https://cloud.google.com/sdk/install) >= 332.0.0
--   [Terraform](https://www.terraform.io/downloads.html) >= 1.0.0
--   [terraform-provider-google] plugin = 3.60.0
--   [terraform-provider-google-beta] plugin = 3.60.0
+### Software Requirement
+Resources in this repository are meant to use with Terraform 1.3.6 (check the terraform version using: `terraform version`). If you don't have the compatible version, download it from official Terraform repository.
 
-### Permissions Requirement:
-In order to execute these templates you must have a Service Account with the following roles. Access can be more fine-grained to follow Principle of least privilege (PoLP).
+-   [Cloud SDK](https://cloud.google.com/sdk/install) >= 414.0.0
+-   [Terraform](https://www.terraform.io/downloads.html) >= 1.3.6
 
-- `roles/resourcemanager.projectOwner` on all the projects where you want to house your resources using service account's email.
-- `roles/storage.admin` on the project housing terraform state files, If leveraging Standard GCS Backend.
+> **Note:** 
+> See [Installation-Guide](https://gist.github.com/anupam-sy/7458df6506e8e3cfb28c0ff56fab546a) on how to install Terraform.
 
-### Project API Requirement:
-In order to use the services, required APIs must be enabled before resource deployment. You can either enable these using terraform or using gcloud command. Sample examples below -
+### Permissions Requirement
+**Option-01:** If you are using terraform on your workstation, It is recommended that you authenticate using User Application Default Credentials ("ADCs") as a primary authentication method. You can enable ADCs by running the command.
 
-* terraform code snip to enable Service APIs
 ```
-    # locals block to define required service APIs
+    gcloud auth application-default login
+```
+
+**Option-02:** You can create a Service Account and reference service account keyfile in providers configuration block.
+
+```
+    provider "google" {
+        credentials = file("./credentials/service_account_key.json")
+    }
+```
+
+Whatever option you choose, make sure to provide the following roles to selected principle (User/ServiceAccount).
+- `roles/resourcemanager.projectOwner` on all the projects where you want to house your resources using service account's email.
+- `roles/storage.admin` on the GCS bucket housing terraform state files. This role is required in case of using GCS backend.
+
+**Note:** 
+- Access can be more fine-grained to follow the principle of least privilege (PoLP).
+- You can explore the other authentication options by reviewing the references and use the best suited for your usecase.
+
+### Project Requirement
+It is required to create a Project on Google Cloud Platform to test and deploy the services. In order to use the google cloud services in a GCP Project, respective service API(s) must be enabled before resource deployment. You can either enable these using terraform or using gcloud command. Sample examples are mentioned below -
+
+1. Use terraform code snip to enable google cloud service APIs
+```
+    // Locals block to define required service APIs
     locals {
     googleapis = [
         "compute.googleapis.com",
         "cloudresourcemanager.googleapis.com",
         "iam.googleapis.com"
-    ]
+        ]
     }
 
-    # resource block to enable required service APIs
+    // Resource block to enable required service APIs
     resource "google_project_service" "apis" {
     for_each = toset(local.googleapis)
 
-    project                = "your_project_id"
+    project                = "[UPDATE_PROJECT_ID]"
     service                = each.key
     disable_on_destroy     = false
     }
 ```
 
-* gcloud command to enable Service APIs
+2. Use gcloud command to enable google cloud service APIs
 ```
 	gcloud services enable servicenetworking.googleapis.com \
 	    cloudresourcemanager.googleapis.com \
@@ -50,24 +77,21 @@ In order to use the services, required APIs must be enabled before resource depl
 	    iam.googleapis.com
 ```
 
-## Execution:
-To execute the Terraform code, go to command prompt and change the directory to your terraform configuration directory and then execute the following commands:
+### Remote Backend Setup
+For local backend, terraform state file is stored locally in the current working directory. To use a remote backend (to enable the collaboration of other team members), create a google cloud storage bucket in a GCP project and enable the versioning. Use below gcloud commands to created and set up gcs backend bucket.
 
--   Run `[Required] terraform init` to initialize the terraform working directory containing configuration files.
--   Run `[Optional] terraform validate` to check whether configuration is syntactically valid and internally consistent.
--   Run `[Optional] terraform fmt` to rewrite Terraform configuration files to a canonical format and style.
--   Run `[Optional] terraform plan` to preview the execution plan.
--   Run `[Required] terraform apply` to execute the actions proposed in a Terraform plan.
--   Run `[Optional] terraform destroy` to destory the resources defined in your Terraform configuration.
+```
+    gcloud config set project PROJECT_ID
+    gsutil mb -c standard -l eu gs://bucket-name
+    gsutil versioning set on gs://bucket-name
+```
 
-## Infrastructure Components:
-Below mentioned resources will be deployed post successful execution of Terraform Code.
+## TF Code Execution
+To execute the Terraform code, go to command prompt and then run the following commands:
 
-1) VPC
-2) Subnet
-3) Firewall
-4) Public and Private IP
-5) Compute Disk
-6) Service Account
-7) Compute Engine
-8) Unmanaged Instance Group
+-   [Required] `terraform init` # To initialize the terraform working directory.
+-   [Optional] `terraform validate` # To validate the terraform configuration.
+-   [Optional] `terraform fmt` # To format the terraform configuration to a canonical format and style.
+-   [Optional] `terraform plan` # To create an execution plan for terraform configuration files.
+-   [Required] `terraform apply -auto-approve` # To execute the actions proposed in a terraform plan to create, update, or destroy infrastructure.
+-   [Optional] `terraform destroy -auto-approve` # To destroy the created infrastructure. Specific resources can be destroyed using resource targetting.
