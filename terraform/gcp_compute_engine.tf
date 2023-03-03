@@ -1,10 +1,15 @@
-# Resoure block to deploy Google Compute Engine
-resource "google_compute_instance" "tst_vm01" {
-  project = var.project_id
+// Data block to get the os image self link
+data "google_compute_image" "dev_rhel_7" {
+  family  = "rhel-7"
+  project = "rhel-cloud"
+}
 
-  name         = var.gce01_name
-  zone         = var.resource_zone
-  machine_type = var.gce01_machine_type
+// Resoure block to deploy google compute engine
+resource "google_compute_instance" "tst_webserver" {
+  project      = var.project_id
+  name         = var.gce_name
+  zone         = var.default_zone
+  machine_type = var.gce_machine_type
 
   # If true, allows Terraform to stop the instance to update its properties.
   allow_stopping_for_update = true
@@ -22,13 +27,13 @@ resource "google_compute_instance" "tst_vm01" {
   }
 
   attached_disk {
-    source = google_compute_disk.tst_vm01_data_disk01.self_link
+    source = google_compute_disk.tst_webserber_data_disk.self_link
     mode   = "READ_WRITE"
   }
 
   # Identity and API access configurations
   service_account {
-    email  = google_service_account.tst_vm01_svcacc.email
+    email  = google_service_account.tst_webserver_svcacc.email
     scopes = ["cloud-platform"]
   }
 
@@ -36,7 +41,7 @@ resource "google_compute_instance" "tst_vm01" {
   labels              = var.resource_labels
   deletion_protection = false
 
-  metadata_startup_script = file("${path.module}/scripts/vm-startup.sh")
+  metadata_startup_script = file("${path.module}/scripts/install_httpd.sh")
   /*
   metadata = {
     # enable-oslogin     = "TRUE"
@@ -61,15 +66,14 @@ resource "google_compute_instance" "tst_vm01" {
   # Networking Section configurations
   # NIC Card(s) to be used with Virtual Machines
   network_interface {
-    subnetwork         = google_compute_subnetwork.tst_vpc01_subnet01.name
+    subnetwork         = google_compute_subnetwork.tst_subnet.name
     subnetwork_project = var.project_id
-    network_ip         = google_compute_address.tst_vm01_iip.address
+    network_ip         = google_compute_address.tst_webserver_iip.address
 
     access_config {
-      nat_ip = google_compute_address.tst_vm01_eip.address
+      nat_ip = google_compute_address.tst_webserver_eip.address
     }
   }
   tags           = ["web", "linux"]
   can_ip_forward = false
 }
-

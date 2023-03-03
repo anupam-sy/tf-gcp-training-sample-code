@@ -1,0 +1,7 @@
+// Configure Google Cloud Storage (GCS) Backend
+terraform {
+  backend "gcs" {
+    bucket      = "UPDATE_ME"
+    prefix      = "terraform/tst"
+  }
+}

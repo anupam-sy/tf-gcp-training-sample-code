@@ -1,7 +1,7 @@
-# Resource block to deploy VPC Firewall
+// Resource block to deploy VPC firewall
 resource "google_compute_firewall" "iap_ingress_fw" {
   name      = "allow-ingress-from-iap"
-  network   = google_compute_network.tst_vpc01.id
+  network   = google_compute_network.tst_vpc.id
   priority  = 300
   direction = "INGRESS"
 
@@ -16,7 +16,7 @@ resource "google_compute_firewall" "iap_ingress_fw" {
 
 resource "google_compute_firewall" "http_https_ingress_fw" {
   name      = "allow-http-https-inbound"
-  network   = google_compute_network.tst_vpc01.id
+  network   = google_compute_network.tst_vpc.id
   priority  = 310
   direction = "INGRESS"
 
